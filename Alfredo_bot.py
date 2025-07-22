@@ -1,4 +1,5 @@
 import telebot
+import random
 from telebot import types
 from tokens import TELEGRAM_BOT_TOKEN 
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
@@ -14,10 +15,12 @@ def get_text_messages(message):
 def choose_modules(message):
         keyboard = types.InlineKeyboardMarkup() #определяем какой вид клавиатуры испльзовать
         calculator_button = types.InlineKeyboardButton(text='🧮 Калькулятор', callback_data='calculator') 
-        keyboard.add(calculator_button) #добавляем кнопку в клавиатуру
         repeater_button= types.InlineKeyboardButton(text='🔁 Повторялка текста', callback_data='repeater')
-        keyboard.add(repeater_button)
         story_maker_button = types.InlineKeyboardButton(text='📖 Сочинялка историй', callback_data='story_maker')
+        coin_flip_button = types.InlineKeyboardButton(text='🔄 Подбросить монетку', callback_data='coin_flip')
+        keyboard.add(coin_flip_button)
+        keyboard.add(calculator_button) #добавляем кнопку в клавиатуру
+        keyboard.add(repeater_button)
         keyboard.add(story_maker_button) 
         question = 'Выбери модуль который тебя интересует:'
         bot.send_message(message.from_user.id, text=question, reply_markup=keyboard)
@@ -36,6 +39,8 @@ def callback_worker(call):
         msg = bot.send_message(call.message.chat.id, "Напиши имя персонажа")
         bot.register_next_step_handler(msg, story_maker)
         user_story_maker_data[msg.chat.id] = {"step": "name"}
+    elif call.data == "coin_flip":
+        bot.send_message(call.message.chat.id, random.choice(["Орёл", "Решка"]))
 
 
 def story_maker(message):
@@ -85,7 +90,7 @@ def story_maker(message):
 def repeat(message):
     if message.text.lower() == "стоп":
         choose_modules(message)
-        return
+        return 
     else:
         msg = bot.send_message(message.chat.id, message.text)
         bot.register_next_step_handler(msg, repeat)
@@ -128,6 +133,7 @@ def calculate_result(message, operand_1, operand_2):
             raise ValueError("Неправильный оператор")
         
         bot.send_message(message.chat.id, f"Результат: {result}")
+        choose_modules(message)
         
     except ZeroDivisionError:
         bot.send_message(message.chat.id, "Ошибка: деление на ноль!")
