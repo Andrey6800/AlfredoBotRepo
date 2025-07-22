@@ -1,6 +1,7 @@
 import telebot
 from telebot import types
-bot = telebot.TeleBot('8053060922:AAE2EF4dKv-Xi-9M21OLkZA4deg0lzS9xCA')
+from tokens import TELEGRAM_BOT_TOKEN 
+bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
 
 user_story_maker_data = {}
 @bot.message_handler(content_types=["text"])
