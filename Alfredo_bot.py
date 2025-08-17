@@ -1,5 +1,5 @@
 import telebot
-import random
+from random import choice
 from telebot import types
 from tokens import TELEGRAM_BOT_TOKEN 
 import os
@@ -332,10 +332,6 @@ def add_user_task(user_id, task):
     data[str(user_id)].append({"id": len(data[str(user_id)]) + 1, "task": task, "completed": False})
     save_data(data)
 
-
-
-
-
 def complete_task(message):
     user_tasks = get_user_tasks(message.from_user.id)
     
@@ -359,8 +355,6 @@ def complete_task(message):
         reply_markup=markup
     )
 
-
-
 def delete_user_task(user_id, task_id):
     data = load_data()
     user_tasks = data.get(str(user_id), [])
@@ -380,7 +374,42 @@ def delete_user_task(user_id, task_id):
     save_data(data)
     return True
 
+#--------------------------------------------------------------#
 
+def generate_password(message):
+    digits = '0123456789'
+    uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    lowercase = 'abcdefghijklmnopqrstuvwxyz' 
+    punctuation = '!#$%&*+-=?@^_' 
+    ally = digits + uppercase + lowercase + punctuation
+
+    chars = ''
+
+    pwd_length = int(input('Введите желаемую длину пароля: '))
+    pwd_auto = input('Сгенерировать пароль автоматически? (y, n): ')
+
+    if pwd_auto == 'y':
+        chars += ally
+    else:
+        pwd_digits = input('Включить цифры (y, n): ')
+        pwd_uppercase = input('Включить uppercase (y, n): ')
+        pwd_lowercase = input('Включить lowercase (y, n): ')
+        pwd_punctuation = input('Включить спец. символы (y, n): ')
+        if pwd_digits == 'y':
+            chars += digits
+        if pwd_uppercase == 'y':
+            chars += uppercase
+        if pwd_lowercase == 'y':
+            chars += lowercase
+        if pwd_punctuation == 'y':
+            chars += punctuation
+
+    password = ''
+
+    for i in range(pwd_length):
+        password += choice(chars)
+
+    print('\n', password, '\n', sep='')
 
 
 
